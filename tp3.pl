@@ -70,21 +70,40 @@ prompt(L) :-
 interagir() :-
     prompt(Frase),
     interprete(Frase,Resposta),
-    responda(Resposta),
-    interagir().
+    responda(Resposta).
 
 % =============================== INTERPRETADOR =================================
 
 palavras([]) --> [].
 palavras([P|R]) --> [P], palavras(R).
 
-% frase(eu_sonhei_com, L) --> [eu, sonhei, com], palavras(L). 
 frase(eu_sonhei_com, Curinga1, Curinga2) --> palavras(Curinga1), [eu, sonhei, com], palavras(Curinga2).
-% frase(eu_sonhei_com, L) --> palavras(L), [eu, sonhei, com], palavras(_).
+frase(eu_lembro, Curinga1, Curinga2) --> palavras(Curinga1), [eu, lembro], palavras(Curinga2).
+frase(voce_lembra, Curinga1, Curinga2) --> palavras(Curinga1), [voce, lembra], palavras(Curinga2).
+frase(se, Curinga1, Curinga2) --> palavras(Curinga1), [se], palavras(Curinga2).
+frase(eu_sonhei, Curinga1, Curinga2) --> palavras(Curinga1), [eu, sonhei], palavras(Curinga2).
+frase(minha_mae, Curinga1, Curinga2) --> palavras(Curinga1), [minha, mae], palavras(Curinga2).
+frase(eu_quero, Curinga1, Curinga2) --> palavras(Curinga1), [eu, quero], palavras(Curinga2).
+frase(sao_como, Curinga1, Curinga2) --> palavras(Curinga1), [sao,como], palavras(Curinga2).
+frase(e_como, Curinga1, Curinga2) --> palavras(Curinga1), [e, como], palavras(Curinga2).
+frase(eu_era_afirmacao, Curinga1, Curinga2) --> palavras(Curinga1), [eu, era], palavras(Curinga2).
+frase(eu_era_pergunta, Curinga1, Curinga2) --> palavras(Curinga1), [eu, era], palavras(Curinga2), [?].
+frase(eu_sou_afirmacao, Curinga1, Curinga2) --> palavras(Curinga1), [eu, sou], palavras(Curinga2).
+frase(eu_sou_pergunta, Curinga1, Curinga2) --> palavras(Curinga1), [eu, sou], palavras(Curinga2), [?].
+frase(voce_e_pergunta, Curinga1, Curinga2) --> palavras(Curinga1), [voce,e], palavras(Curinga2), [?].
+frase(voce_e, Curinga1, Curinga2) --> palavras(Curinga1), [voce,e], palavras(Curinga2).
+frase(voce_era_pergunta, Curinga1, Curinga2) --> palavras(Curinga1), [voce, era], palavras(Curinga2), [?].
+frase(eu_nao_posso, Curinga1, Curinga2) --> palavras(Curinga1), [eu, nao, posso], palavras(Curinga2).
+frase(eu_sinto, Curinga1, Curinga2) --> palavras(Curinga1), [eu, sinto], palavras(Curinga2).
+frase(porque_voce_nao, Curinga1, Curinga2) --> palavras(Curinga1), [porque,voce,nao], palavras(Curinga2).
+frase(sao, Curinga1, Curinga2) --> palavras(Curinga1), [sao], palavras(Curinga2).
 
-interpretar(E, repertorio(eu_sonhei_com, Curinga1, Curinga2)) :- 
+
+interprete(E, repertorio(eu_sonhei_com, Curinga1, Curinga2)) :- 
     frase(eu_sonhei_com, Curinga1,Curinga2, E, []).
 
+interprete(E, repertorio(eu_sonhei_com, Curinga1, Curinga2)) :- 
+    frase(eu_sonhei_com, Curinga1,Curinga2, E, []).
 
 interprete(Frase, oi):-
      sublist([oi],Frase).
@@ -155,16 +174,10 @@ interprete(Frase, talvez):-
 interprete(Frase, bye):-
      sublist([bye],Frase).
     
-interprete(Frase, _).
+interprete(_, _).
     
 % =============================== RESPOSTAS =====================================
 
-
-
-% Repostas sem parametros:
-responda(repertorio(eu_sonhei_com, L)):-
-    random_member(RespostaEscolhida, [['Como você se sente em relação a ',L,'na verdade?']]),
-    escreva(RespostaEscolhida).
 
 responda(oi):-
     random_member(RespostaEscolhida, ['Como vai você? Por favor, me fale do seu problema.']),
@@ -182,41 +195,66 @@ responda(desculpe):-
     random_member(RespostaEscolhida, ['Por favor, não se desculpe','Desculpas não são necessárias','Como você se sente quando se desculpa?']),
     escreva(RespostaEscolhida).
 
-% responda(eu_lembro):-
-%     random_member(RespostaEscolhida, ['']),
-%     escreva(RespostaEscolhida).
+responda(repertorio(eu_lembro, _,Curinga2)):-
+    random_member(RespostaEscolhida, [
+        ['Você normalmente lembra',Curinga2,'?'],
+        ['Lembrar ',Curinga2,' traz alguma outra lembrança à sua mente?'],
+        ['Que outras coisas você lembra?'],
+        ['Porque você lembra ',Curinga2,' nesse momento?'],
+        ['O que na situação atual faz você lembrar ',Curinga2,'?   ']
+    ]),
+    escreva(RespostaEscolhida).
 
-% responda(voce_lembra):-
-%     random_member(RespostaEscolhida, ['']),
-%     escreva(RespostaEscolhida).
+ responda(repertorio(voce_lembra, _,Curinga2)):-
+     random_member(RespostaEscolhida, [
+        ['Você acha que eu me esqueceria',Curinga2,'?'],
+        ['Porque você acha que eu deveria lembrar',Curinga2,'agora?'],
+        ['E que tal ',Curinga2,'?'],
+        ['Você mencionou',Curinga2,'?']
+    ]),
+    escreva(RespostaEscolhida).
 
-% responda(se):-
-%     random_member(RespostaEscolhida, ['']),
-%     escreva(RespostaEscolhida).
+ responda(repertorio(se, _,Curinga2)):-
+     random_member(RespostaEscolhida, [
+        ['Sério?'],
+        ['De verdade? se',Curinga2,'?']
+]),
+    escreva(RespostaEscolhida).
 
-% responda(eu_sonhei):-
-%     random_member(RespostaEscolhida, ['']),
-%     escreva(RespostaEscolhida).
+ responda(repertorio(eu_sonhei, _,Curinga2)):-
+     random_member(RespostaEscolhida, [
+    ['Realmente?',Curinga2,'?'],
+    ['Você já sonhou',Curinga2,'enquanto acordado?'],
+    ['Você já havia sonhado ',Curinga2,' antes?']
+]),
+    escreva(RespostaEscolhida).
 
-% responda(eu_sonhei_com):-
-%     random_member(RespostaEscolhida, ['']),
-%     escreva(RespostaEscolhida).
+responda(repertorio(eu_sonhei_com, Curinga1,_)):-
+    random_member(RespostaEscolhida, [ ['Como você se sente em relação a',Curinga1,'na verdade?'] ]),
+    escreva(RespostaEscolhida).
 
 responda(sonho):-
     random_member(RespostaEscolhida, ['O que este sonho sugere a você?','Você sonha com frequencia?','Que pessoas aparecem em seus sonhos?','Você não acha que sonhos tem algo a ver com o seu problema?']),
     escreva(RespostaEscolhida).
 
-% responda(minha_mae):-
-%     random_member(RespostaEscolhida, ['']),
-%     escreva(RespostaEscolhida).
+ responda(repertorio(minha_mae, _,Curinga2)):-
+    random_member(RespostaEscolhida, [
+    ['Quem mais na sua família',Curinga2,'?'],
+    ['Fale-me mais sobre a sua família']
+]),
+    escreva(RespostaEscolhida).
 
 responda(meu_pai):-
     random_member(RespostaEscolhida, ['Seu pai?','Ele influencia você fortemente?','O que mais vem à sua mente quando você pensa no seu pai?']),
     escreva(RespostaEscolhida).
 
-% responda(eu_quero):-
-%     random_member(RespostaEscolhida, ['']),
-%     escreva(RespostaEscolhida).
+ responda(repertorio(eu_quero, _,Curinga2)):-
+    random_member(RespostaEscolhida, [
+    ['Qual a importância de ter ',Curinga2,'?'],
+    ['Porque você quer ',Curinga2,'?'],
+    ['Acho que você terá', Curinga2, 'logo']
+]),
+    escreva(RespostaEscolhida).
 
 responda(estou_feliz):-
     random_member(RespostaEscolhida, ['Eu tenho alguma influência nisso?','O que te faz feliz?','Você pode explicar o porque de feliz?']),
@@ -226,14 +264,19 @@ responda(estou_triste):-
     random_member(RespostaEscolhida, ['Sinto que você se sinta assim','Estou certo de que não é prazeroso estar assim']),
     escreva(RespostaEscolhida).
 
-% responda(sao_como):-
-%     random_member(RespostaEscolhida, ['']),
-%     escreva(RespostaEscolhida).
+ responda(repertorio(sao_como, Curinga1,Curinga2)):-
+    random_member(RespostaEscolhida, ['Que semelhança você vê entre ',Curinga1,' e ', Curinga2]),
+    escreva(RespostaEscolhida).
 
 
-% responda(e_como):-
-%     random_member(RespostaEscolhida, ['']),
-%     escreva(RespostaEscolhida).
+responda(repertorio(e_como, Curinga1,Curinga2)):-
+    random_member(RespostaEscolhida, [
+        ['De que forma ',Curinga1,' é como', Curinga2],
+        ['Que semelhança você vê?'],
+        ['Será que há realmente alguma coisa em comum?'],
+        ['Como?']
+    ]),
+    escreva(RespostaEscolhida).
 
 responda(parece):-
     random_member(RespostaEscolhida, ['De que forma?','Que similaridades há?']),
@@ -243,57 +286,93 @@ responda(mesmo):-
     random_member(RespostaEscolhida, ['Que outras conexões você observa?']),
     escreva(RespostaEscolhida).
 
-% responda(eu_era_afirmacao):-
-%     random_member(RespostaEscolhida, ['']),
-%     escreva(RespostaEscolhida).
-
-% responda(eu_era_pergunta):-
-%     random_member(RespostaEscolhida, ['']),
-%     escreva(RespostaEscolhida).
-
-responda(eu_sou_afirmacao):-
-    random_member(RespostaEscolhida, ['']),
+responda(repertorio(eu_era_afirmacao, _,Curinga2)):-
+    random_member(RespostaEscolhida, [
+        ['Você era realmente?'],
+        ['Talvez eu soubesse que você fosse', Curinga2],
+        ['Porque você está me dizendo que era', Curinga2,'agora?']
+    ]),
     escreva(RespostaEscolhida).
 
-responda(eu_sou_pergunta):-
-    random_member(RespostaEscolhida, ['']),
+responda(repertorio(eu_era_pergunta, _,Curinga2)):-
+    random_member(RespostaEscolhida, [
+        ['E se você fosse ',Curinga2,'?'],
+        ['Você acha que era ',Curinga2],
+        ['E qual o siginificado de ser ',Curinga2]
+    ]),
+    escreva(RespostaEscolhida).
+
+responda(repertorio(eu_sou_afirmacao, _,Curinga2)):-
+    random_member(RespostaEscolhida, [
+        ['E como você é ',Curinga2],
+        ['Você quer ser ',Curinga2,'?']
+    ]),
+    escreva(RespostaEscolhida).
+
+responda(repertorio(eu_sou_pergunta, _,Curinga2)):-
+    random_member(RespostaEscolhida, [
+        ['Você acredita que você seja ',Curinga2],
+        ['Você gostaria de ser ',Curinga2],
+        ['Você gostaria que eu dissesse que você é',Curinga2],
+        ['E qual o siginificado de ser ',Curinga2]    
+    ]),
     escreva(RespostaEscolhida).
 
 responda(sou):-
     random_member(RespostaEscolhida, ['Porque você está dizendo \"SOU\"?','Nao entendi']),
     escreva(RespostaEscolhida).
 
-% responda(você_e_pergunta):-
-%     random_member(RespostaEscolhida, ['']),
-%     escreva(RespostaEscolhida).
+responda(repertorio(voce_e_pergunta, _,Curinga2)):-
+    random_member(RespostaEscolhida, [
+    ['E qual o seu interesse em saber se sou',Curinga2,' ou não?'],
+    ['Você iria preferir se eu não fosse',Curinga2],
+    ['Talvez eu seja',Curinga2,' em suas fantasias']
+    ]),
+    escreva(RespostaEscolhida).
 
-% responda(você_e_afirmacao):-
-%     random_member(RespostaEscolhida, ['']),
-%     escreva(RespostaEscolhida).
+responda(repertorio(voce_e_afirmacao, _,Curinga2)):-
+    random_member(RespostaEscolhida, [
+        ['O que faz você pensar que eu sou',Curinga2,'?']
+    ]),
+    escreva(RespostaEscolhida).
 
 responda(por_causa):-
     random_member(RespostaEscolhida, ['Essa é a razão?','Que outras razões você acha que poderiam haver?','E isto explica tudo?']),
     escreva(RespostaEscolhida).
 
-% responda(voce_era_pergunta):-
-%     random_member(RespostaEscolhida, ['']),
-%     escreva(RespostaEscolhida).
+responda(repertorio(voce_era_pergunta, _,Curinga2)):-
+    random_member(RespostaEscolhida, [
+        ['Talvez eu fosse ',Curinga2],
+        ['O que você acha?'],
+        ['E se eu fosse ',Curinga2]
+    ]),
+    escreva(RespostaEscolhida).
 
-% responda(eu_nao_posso):-
-%     random_member(RespostaEscolhida, ['']),
-%     escreva(RespostaEscolhida).
+responda(repertorio(eu_nao_posso, _,Curinga2)):-
+    random_member(RespostaEscolhida, [
+        ['Você sempre sente ',Curinga2,' ?']
+    ]),
+    escreva(RespostaEscolhida).
 
-% responda(eu_sinto):-
-%     random_member(RespostaEscolhida, ['']),
-%     escreva(RespostaEscolhida).
+responda(repertorio(eu_sinto, _,Curinga2)):-
+    random_member(RespostaEscolhida, [
+        ['Você',Curinga2,'?'],
+        ['Você acredita que eu não',Curinga2,''],
+        ['Talvez eu vá',Curinga2,' depois']
+    ]),
+    escreva(RespostaEscolhida).
 
 responda(eu_sentia):-
     random_member(RespostaEscolhida, ['Que outras coisas você sente?']),
     escreva(RespostaEscolhida).
 
-% responda(porque_você_nao):-
-%     random_member(RespostaEscolhida, ['']),
-%     escreva(RespostaEscolhida).
+responda(repertorio(porque_você_nao, _,Curinga2)):-
+    random_member(RespostaEscolhida, [
+        ['Você ',Curinga2,'?'],
+        ['Você acredita que eu não',Curinga2],
+        ['Talvez eu vá ',Curinga2,' depois']
+    ]),
+    escreva(RespostaEscolhida).
 
 responda(sim):-
     random_member(RespostaEscolhida, ['Você parece uma pessoa bem positiva','Tem certeza?','Entendo']),
@@ -323,9 +402,12 @@ responda(talvez):-
     random_member(RespostaEscolhida, ['Você não parece muito certo']),
     escreva(RespostaEscolhida).
 
-% responda(sao):-
-%     random_member(RespostaEscolhida, ['']),
-%     escreva(RespostaEscolhida).
+responda(repertorio(sao, _,Curinga2)):-
+    random_member(RespostaEscolhida, [
+        ['Você acha que eles poderiam não ser ',Curinga2],
+        ['Possivelmente eles são ',Curinga2]
+    ]),
+    escreva(RespostaEscolhida).
 
 responda(bye):-
     random_member(RespostaEscolhida, ['tchau']),
