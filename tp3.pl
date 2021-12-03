@@ -7,6 +7,39 @@ sublist([P|R], L) :-
 sublist(T, L) :-
     append([_, [T], _], L).
 
+casarPadrao(X,X).
+
+% Previne problemas com saidas sem curingas:
+formatarSaida(oi,oi).
+formatarSaida(computador,computador).
+formatarSaida(nome,nome).
+formatarSaida(desculpe,desculpe).
+formatarSaida(sonho,sonho).
+formatarSaida(meu_pai,meu_pai).
+formatarSaida(estou_feliz,estou_feliz).
+formatarSaida(estou_triste,estou_triste).
+formatarSaida(parece,parece).
+formatarSaida(mesmo,mesmo).
+formatarSaida(eu_sou_afirmacao,eu_sou_afirmacao).
+formatarSaida(eu_sou_pergunta,eu_sou_pergunta).
+formatarSaida(sou,sou).
+formatarSaida(por_causa,por_causa).
+formatarSaida(eu_sentia,eu_sentia).
+formatarSaida(sim,sim).
+formatarSaida(nao,nao).
+formatarSaida(alguem,alguem).
+formatarSaida(todos,todos).
+formatarSaida(sempre,sempre).
+formatarSaida(o_que,o_que).
+formatarSaida(talvez,talvez).
+formatarSaida(bye,bye).
+
+% Converte os curingas de lista para string
+formatarSaida(repertorio(Keyword, Curinga1,Curinga2),repertorio(Keyword,Curinga1Formatado,Curinga2Formatado)) :-
+    transformacaoContextual(Curinga1, Curinga1Contextualizado),
+    transformacaoContextual(Curinga2, Curinga2Contextualizado),
+    atomic_list_concat(Curinga1Contextualizado, ' ', Curinga1Formatado),
+    atomic_list_concat(Curinga2Contextualizado, ' ', Curinga2Formatado).
 
 
 % Escreve uma lista no console utilizando uma string ou uma lista de forma recursiva
@@ -56,21 +89,26 @@ normalize_string([H|R], [H|NR]) :-
     normalize_string(R, NR).
 
 
-% ====================== ITERAÇÃO COM O USUÁRIO =========================================
+% ===================================TRATAMENTO DE SAÍDA ====================================
 
 
-%  Prompt de entrada para o usuário
-prompt(L) :-
-    write('> '),
-    read_line_to_codes(user_input, Cs),
-    normalize_string(Cs, NCs),
-    atom_codes(A, NCs),
-    atomic_list_concat(L, ' ', A).
+% Caso base de recursão
+transformacaoContextual([], []).
 
-interagir() :-
-    prompt(Frase),
-    interprete(Frase,Resposta),
-    responda(Resposta).
+% Transforma o contexto de palavras da conversa para manter o sentido
+transformacaoContextual([meu|R], [seu|NR] ):- transformacaoContextual(R,NR).
+transformacaoContextual([minha|R], [sua|NR] ):- transformacaoContextual(R,NR).
+transformacaoContextual([eu|R], [voce|NR] ):- transformacaoContextual(R,NR).
+transformacaoContextual([sou|R], [e|NR] ):- transformacaoContextual(R,NR).
+transformacaoContextual([fui|R], [foi|NR] ):- transformacaoContextual(R,NR).
+transformacaoContextual([estou|R], [esta|NR] ):- transformacaoContextual(R,NR).
+transformacaoContextual([tenho|R], [tem|NR] ):- transformacaoContextual(R,NR).
+transformacaoContextual([tive|R], [teve|NR] ):- transformacaoContextual(R,NR).
+transformacaoContextual([fomos|R], [eram|NR] ):- transformacaoContextual(R,NR).
+transformacaoContextual([meus|R], [seus|NR] ):- transformacaoContextual(R,NR).
+transformacaoContextual([minhas|R], [suas|NR] ):- transformacaoContextual(R,NR).
+transformacaoContextual([teus|R], [meus|NR] ):- transformacaoContextual(R,NR).
+transformacaoContextual([H|R], [H|NR] ):- transformacaoContextual(R,NR).
 
 % =============================== INTERPRETADOR =================================
 
@@ -99,81 +137,140 @@ frase(porque_voce_nao, Curinga1, Curinga2) --> palavras(Curinga1), [porque,voce,
 frase(sao, Curinga1, Curinga2) --> palavras(Curinga1), [sao], palavras(Curinga2).
 
 
-interprete(E, repertorio(eu_sonhei_com, Curinga1, Curinga2)) :- 
-    frase(eu_sonhei_com, Curinga1,Curinga2, E, []).
-
-interprete(E, repertorio(eu_sonhei_com, Curinga1, Curinga2)) :- 
-    frase(eu_sonhei_com, Curinga1,Curinga2, E, []).
-
 interprete(Frase, oi):-
-     sublist([oi],Frase).
-    
+    sublist([oi],Frase).
+   
 interprete(Frase, computador):-
-     sublist([computador],Frase).
-    
+    sublist([computador],Frase).
+   
 interprete(Frase, nome):-
-     sublist([nome],Frase).
-    
+    sublist([nome],Frase).
+   
 interprete(Frase, desculpe):-
-     sublist([desculpe],Frase).
-    
+    sublist([desculpe],Frase).
+   
 interprete(Frase, sonho):-
-     sublist([sonho],Frase).
-    
+    sublist([sonho],Frase).
+   
 interprete(Frase, meu_pai):-
-     sublist([meu,pai],Frase).
-    
+    sublist([meu,pai],Frase).
+   
 interprete(Frase, estou_feliz):-
-     sublist([estou,feliz],Frase).
-    
+    sublist([estou,feliz],Frase).
+   
 interprete(Frase, estou_triste):-
-     sublist([estou,triste],Frase).
-    
+    sublist([estou,triste],Frase).
+   
 interprete(Frase, parece):-
-     sublist([parece],Frase).
-    
+    sublist([parece],Frase).
+   
 interprete(Frase, mesmo):-
-     sublist([mesmo],Frase).
-    
+    sublist([mesmo],Frase).
+   
 interprete(Frase, eu_sou_afirmacao):-
-     sublist([eu,sou],Frase).
-    
+    sublist([eu,sou],Frase).
+   
 interprete(Frase, eu_sou_pergunta):-
-     sublist([eu,sou,?],Frase).
-    
+    sublist([eu,sou,?],Frase).
+   
 interprete(Frase, sou):-
-     sublist([sou],Frase).
-    
+    sublist([sou],Frase).
+   
 interprete(Frase, por_causa):-
-     sublist([por,causa],Frase).
-    
+    sublist([por,causa],Frase).
+   
 interprete(Frase, eu_sentia):-
-     sublist([eu,sentia],Frase).
-    
+    sublist([eu,sentia],Frase).
+   
 interprete(Frase, sim):-
-     sublist([sim],Frase).
-    
+    sublist([sim],Frase).
+   
 interprete(Frase, nao):-
-     sublist([nao],Frase).
-    
+    sublist([nao],Frase).
+   
 interprete(Frase, alguem):-
-     sublist([alguem],Frase).
-    
+    sublist([alguem],Frase).
+   
 interprete(Frase, todos):-
-     sublist([todos],Frase).
-    
+    sublist([todos],Frase).
+   
 interprete(Frase, sempre):-
-     sublist([sempre],Frase).
-    
+    sublist([sempre],Frase).
+   
 interprete(Frase, o_que):-
-     sublist([o,que],Frase).
-    
+    sublist([o,que],Frase).
+   
 interprete(Frase, talvez):-
-     sublist([talvez],Frase).
-    
+    sublist([talvez],Frase).
+   
 interprete(Frase, bye):-
-     sublist([bye],Frase).
-    
+    sublist([bye],Frase).
+   
+
+interprete(E, repertorio(eu_sonhei_com, Curinga1, Curinga2)) :-
+    frase(eu_sonhei_com, Curinga1,Curinga2, E, []).
+
+interprete(E,repertorio(eu_lembro, Curinga1,Curinga2)) :-
+    frase(eu_lembro, Curinga1,Curinga2, E, []).
+
+interprete(E,repertorio(voce_lembra, Curinga1,Curinga2)) :-
+    frase(voce_lembra, Curinga1,Curinga2, E, []).
+
+interprete(E,repertorio(se, Curinga1,Curinga2)) :-
+    frase(se, Curinga1,Curinga2, E, []).
+
+interprete(E,repertorio(eu_sonhei, Curinga1,Curinga2)) :-
+    frase(eu_sonhei, Curinga1,Curinga2, E, []).
+
+interprete(E,repertorio(eu_sonhei_com, Curinga1,Curinga2)) :-
+    frase(eu_sonhei_com, Curinga1,Curinga2, E, []).
+
+interprete(E,repertorio(minha_mae, Curinga1,Curinga2)) :-
+    frase(minha_mae, Curinga1,Curinga2, E, []).
+
+interprete(E,repertorio(eu_quero, Curinga1,Curinga2)) :-
+    frase(eu_quero, Curinga1,Curinga2, E, []).
+
+interprete(E,repertorio(sao_como, Curinga1,Curinga2)) :-
+    frase(sao_como, Curinga1,Curinga2, E, []).
+
+interprete(E,repertorio(e_como, Curinga1,Curinga2)) :-
+    frase(e_como, Curinga1,Curinga2, E, []).
+
+interprete(E,repertorio(eu_era_afirmacao, Curinga1,Curinga2)) :-
+    frase(eu_era_afirmacao, Curinga1,Curinga2, E, []).
+
+interprete(E,repertorio(eu_era_pergunta, Curinga1,Curinga2)) :-
+    frase(eu_era_pergunta, Curinga1,Curinga2, E, []).
+
+interprete(E,repertorio(eu_sou_afirmacao, Curinga1,Curinga2)) :-
+    frase(eu_sou_afirmacao, Curinga1,Curinga2, E, []).
+
+interprete(E,repertorio(eu_sou_pergunta, Curinga1,Curinga2)) :-
+    frase(eu_sou_pergunta, Curinga1,Curinga2, E, []).
+
+interprete(E,repertorio(voce_e_pergunta, Curinga1,Curinga2)) :-
+    frase(voce_e_pergunta, Curinga1,Curinga2, E, []).
+
+interprete(E,repertorio(voce_e_afirmacao, Curinga1,Curinga2)) :-
+    frase(voce_e_afirmacao, Curinga1,Curinga2, E, []).
+
+interprete(E,repertorio(voce_era_pergunta, Curinga1,Curinga2)) :-
+    frase(voce_era_pergunta, Curinga1,Curinga2, E, []).
+
+interprete(E,repertorio(eu_nao_posso, Curinga1,Curinga2)) :-
+    frase(eu_nao_posso, Curinga1,Curinga2, E, []).
+
+interprete(E,repertorio(eu_sinto, Curinga1,Curinga2)) :-
+    frase(eu_sinto, Curinga1,Curinga2, E, []).
+
+interprete(E,repertorio(porque_você_nao, Curinga1,Curinga2)) :-
+    frase(porque_você_nao, Curinga1,Curinga2, E, []).
+
+interprete(E,repertorio(sao, Curinga1,Curinga2)) :-
+    frase(sao, Curinga1,Curinga2, E, []).
+
+
 interprete(_, _).
     
 % =============================== RESPOSTAS =====================================
@@ -198,10 +295,10 @@ responda(desculpe):-
 responda(repertorio(eu_lembro, _,Curinga2)):-
     random_member(RespostaEscolhida, [
         ['Você normalmente lembra',Curinga2,'?'],
-        ['Lembrar ',Curinga2,' traz alguma outra lembrança à sua mente?'],
+        ['Lembrar',Curinga2,' traz alguma outra lembrança à sua mente?'],
         ['Que outras coisas você lembra?'],
-        ['Porque você lembra ',Curinga2,' nesse momento?'],
-        ['O que na situação atual faz você lembrar ',Curinga2,'?   ']
+        ['Porque você lembra',Curinga2,' nesse momento?'],
+        ['O que na situação atual faz você lembrar',Curinga2,'?   ']
     ]),
     escreva(RespostaEscolhida).
 
@@ -209,7 +306,7 @@ responda(repertorio(eu_lembro, _,Curinga2)):-
      random_member(RespostaEscolhida, [
         ['Você acha que eu me esqueceria',Curinga2,'?'],
         ['Porque você acha que eu deveria lembrar',Curinga2,'agora?'],
-        ['E que tal ',Curinga2,'?'],
+        ['E que tal',Curinga2,'?'],
         ['Você mencionou',Curinga2,'?']
     ]),
     escreva(RespostaEscolhida).
@@ -225,7 +322,7 @@ responda(repertorio(eu_lembro, _,Curinga2)):-
      random_member(RespostaEscolhida, [
     ['Realmente?',Curinga2,'?'],
     ['Você já sonhou',Curinga2,'enquanto acordado?'],
-    ['Você já havia sonhado ',Curinga2,' antes?']
+    ['Você já havia sonhado',Curinga2,' antes?']
 ]),
     escreva(RespostaEscolhida).
 
@@ -250,8 +347,8 @@ responda(meu_pai):-
 
  responda(repertorio(eu_quero, _,Curinga2)):-
     random_member(RespostaEscolhida, [
-    ['Qual a importância de ter ',Curinga2,'?'],
-    ['Porque você quer ',Curinga2,'?'],
+    ['Qual a importância de ter',Curinga2,'?'],
+    ['Porque você quer',Curinga2,'?'],
     ['Acho que você terá', Curinga2, 'logo']
 ]),
     escreva(RespostaEscolhida).
@@ -265,13 +362,13 @@ responda(estou_triste):-
     escreva(RespostaEscolhida).
 
  responda(repertorio(sao_como, Curinga1,Curinga2)):-
-    random_member(RespostaEscolhida, ['Que semelhança você vê entre ',Curinga1,' e ', Curinga2]),
+    random_member(RespostaEscolhida, [['Que semelhança você vê entre',Curinga1,'e', Curinga2,'']]),
     escreva(RespostaEscolhida).
 
 
 responda(repertorio(e_como, Curinga1,Curinga2)):-
     random_member(RespostaEscolhida, [
-        ['De que forma ',Curinga1,' é como', Curinga2],
+        ['De que forma ',Curinga1,' é como', Curinga2,''],
         ['Que semelhança você vê?'],
         ['Será que há realmente alguma coisa em comum?'],
         ['Como?']
@@ -289,32 +386,32 @@ responda(mesmo):-
 responda(repertorio(eu_era_afirmacao, _,Curinga2)):-
     random_member(RespostaEscolhida, [
         ['Você era realmente?'],
-        ['Talvez eu soubesse que você fosse', Curinga2],
+        ['Talvez eu soubesse que você fosse', Curinga2,''],
         ['Porque você está me dizendo que era', Curinga2,'agora?']
     ]),
     escreva(RespostaEscolhida).
 
 responda(repertorio(eu_era_pergunta, _,Curinga2)):-
     random_member(RespostaEscolhida, [
-        ['E se você fosse ',Curinga2,'?'],
-        ['Você acha que era ',Curinga2],
-        ['E qual o siginificado de ser ',Curinga2]
+        ['E se você fosse',Curinga2,'?'],
+        ['Você acha que era',Curinga2,''],
+        ['E qual o siginificado de ser',Curinga2,'']
     ]),
     escreva(RespostaEscolhida).
 
 responda(repertorio(eu_sou_afirmacao, _,Curinga2)):-
     random_member(RespostaEscolhida, [
-        ['E como você é ',Curinga2],
-        ['Você quer ser ',Curinga2,'?']
+        ['E como você é',Curinga2,''],
+        ['Você quer ser',Curinga2,'?']
     ]),
     escreva(RespostaEscolhida).
 
 responda(repertorio(eu_sou_pergunta, _,Curinga2)):-
     random_member(RespostaEscolhida, [
-        ['Você acredita que você seja ',Curinga2],
-        ['Você gostaria de ser ',Curinga2],
-        ['Você gostaria que eu dissesse que você é',Curinga2],
-        ['E qual o siginificado de ser ',Curinga2]    
+        ['Você acredita que você seja',Curinga2,''],
+        ['Você gostaria de ser',Curinga2,''],
+        ['Você gostaria que eu dissesse que você é',Curinga2,''],
+        ['E qual o siginificado de ser',Curinga2,'']    
     ]),
     escreva(RespostaEscolhida).
 
@@ -325,7 +422,7 @@ responda(sou):-
 responda(repertorio(voce_e_pergunta, _,Curinga2)):-
     random_member(RespostaEscolhida, [
     ['E qual o seu interesse em saber se sou',Curinga2,' ou não?'],
-    ['Você iria preferir se eu não fosse',Curinga2],
+    ['Você iria preferir se eu não fosse',Curinga2,''],
     ['Talvez eu seja',Curinga2,' em suas fantasias']
     ]),
     escreva(RespostaEscolhida).
@@ -342,15 +439,15 @@ responda(por_causa):-
 
 responda(repertorio(voce_era_pergunta, _,Curinga2)):-
     random_member(RespostaEscolhida, [
-        ['Talvez eu fosse ',Curinga2],
+        ['Talvez eu fosse',Curinga2,''],
         ['O que você acha?'],
-        ['E se eu fosse ',Curinga2]
+        ['E se eu fosse',Curinga2,'']
     ]),
     escreva(RespostaEscolhida).
 
 responda(repertorio(eu_nao_posso, _,Curinga2)):-
     random_member(RespostaEscolhida, [
-        ['Você sempre sente ',Curinga2,' ?']
+        ['Você sempre sente',Curinga2,' ?']
     ]),
     escreva(RespostaEscolhida).
 
@@ -368,9 +465,9 @@ responda(eu_sentia):-
 
 responda(repertorio(porque_você_nao, _,Curinga2)):-
     random_member(RespostaEscolhida, [
-        ['Você ',Curinga2,'?'],
-        ['Você acredita que eu não',Curinga2],
-        ['Talvez eu vá ',Curinga2,' depois']
+        ['Você',Curinga2,'?'],
+        ['Você acredita que eu não',Curinga2,''],
+        ['Talvez eu vá',Curinga2,' depois']
     ]),
     escreva(RespostaEscolhida).
 
@@ -404,8 +501,8 @@ responda(talvez):-
 
 responda(repertorio(sao, _,Curinga2)):-
     random_member(RespostaEscolhida, [
-        ['Você acha que eles poderiam não ser ',Curinga2],
-        ['Possivelmente eles são ',Curinga2]
+        ['Você acha que eles poderiam não ser',Curinga2,''],
+        ['Possivelmente eles são',Curinga2,'']
     ]),
     escreva(RespostaEscolhida).
 
@@ -416,3 +513,22 @@ responda(bye):-
 responda(_):-
     random_member(RespostaEscolhida, ['Muito interessante.,','Não sei se entendi você direito','O que isso sugere a você?','Por favor, continue.','Continue','Você quer mesmo falar sobre isso?','Elabore melhor']),
     escreva(RespostaEscolhida).
+
+
+% ====================== ITERAÇÃO COM O USUÁRIO =========================================
+
+
+%  Prompt de entrada para o usuário
+prompt(L) :-
+    write('> '),
+    read_line_to_codes(user_input, Cs),
+    normalize_string(Cs, NCs),
+    atom_codes(A, NCs),
+    atomic_list_concat(L, ' ', A).
+
+eliza() :-
+    prompt(Frase),
+    interprete(Frase,Resposta),
+    formatarSaida(Resposta, RespostaFormatada),
+    responda(RespostaFormatada),
+    eliza().
