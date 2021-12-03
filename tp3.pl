@@ -75,6 +75,17 @@ interagir() :-
 
 % =============================== INTERPRETADOR =================================
 
+palavras([]) --> [].
+palavras([P|R]) --> [P], palavras(R).
+
+% frase(eu_sonhei_com, L) --> [eu, sonhei, com], palavras(L). 
+frase(eu_sonhei_com, Curinga1, Curinga2) --> palavras(Curinga1), [eu, sonhei, com], palavras(Curinga2).
+% frase(eu_sonhei_com, L) --> palavras(L), [eu, sonhei, com], palavras(_).
+
+interpretar(E, repertorio(eu_sonhei_com, Curinga1, Curinga2)) :- 
+    frase(eu_sonhei_com, Curinga1,Curinga2, E, []).
+
+
 interprete(Frase, oi):-
      sublist([oi],Frase).
     
@@ -151,9 +162,9 @@ interprete(Frase, _).
 
 
 % Repostas sem parametros:
-% responda():-
-%     random_member(RespostaEscolhida, ['']),
-%     escreva(RespostaEscolhida).
+responda(repertorio(eu_sonhei_com, L)):-
+    random_member(RespostaEscolhida, [['Como você se sente em relação a ',L,'na verdade?']]),
+    escreva(RespostaEscolhida).
 
 responda(oi):-
     random_member(RespostaEscolhida, ['Como vai você? Por favor, me fale do seu problema.']),
